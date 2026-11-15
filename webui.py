@@ -68,7 +68,8 @@ def build_app(bot):
 
 def main():
     parser = argparse.ArgumentParser(description="BardBot chat page in the browser.")
-    parser.add_argument("--top-k", type=int, default=5, help="Passages sent to the LLM.")
+    parser.add_argument("--top-k", type=int, default=None,
+                        help="Passages sent to the LLM (default: 8 in API mode, 5 otherwise).")
     parser.add_argument("--rerank", action=argparse.BooleanOptionalAction, default=False)
     parser.add_argument("--candidates", type=int, default=RERANK_CANDIDATES)
     parser.add_argument("--model", default=LLM_NAME, help="Local LLM in data/models.")

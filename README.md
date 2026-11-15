@@ -39,7 +39,8 @@ Start the command without a question to ask several questions, one at a time. Ty
 
 | Option | What it does |
 |---|---|
-| `--top-k N` | Send N passages to the LLM (default 5). |
+| `--top-k N` | Send N passages to the LLM (default 8 in API mode, 5 otherwise). |
+| `--rewrite` / `--no-rewrite` | Query rewriting before the search (default: on in API mode; needs API mode). |
 | `--show-passages` | Also print the full passages. |
 | `--rerank` | Re-score the search results with the reranker (off by default; see Results). |
 | `--model NAME` | Use another local LLM in `data/models`. |
@@ -67,6 +68,8 @@ When the terminal shows the address, open http://127.0.0.1:7860 in your browser.
 ## API mode (optional)
 
 In API mode, an OpenAI model writes the answer. The search still runs on your computer, and the prompt is the same as for the local LLM. Each question costs money and needs an internet connection.
+
+API mode also uses **query rewriting** and **8 passages** by default. Before the search, the API model describes the scene that answers the question in 2 modern sentences, for example "In Macbeth, Macbeth speaks alone and imagines a dagger floating before him…". The search score is the average of the question score and the description score. So each question makes 2 API calls and takes about 6–7 seconds. Use `--no-rewrite --top-k 5` for the older, faster setup.
 
 1. Create an API key on the OpenAI dashboard.
 2. Create a file named `.env` in the project folder with this line, and paste your key after the `=` sign:
@@ -132,8 +135,8 @@ The question sets are in `data/evaluation/`. Each answerable question has a refe
 | `retrieval_cases_test.json` | 16 | Test questions. Written before the reranker work. Later used as development questions for the summary work. |
 | `retrieval_cases_test2.json` | 15 | Test questions for the summary work. Used one time, for the final measurement. Now development questions. |
 | `unanswerable_dev.json`, `unanswerable_test.json` | 4, 3 | Questions that the plays do not answer. The correct reply is "no answer". Both are now development questions. |
-| `retrieval_cases_test3.json` | 25 | **Unused test questions** for the next design change. 5 of them quote the play (`"type": "quote"`). |
-| `unanswerable_test2.json` | 5 | **Unused** unanswerable test questions: 2 about details that the plays do not give (for example "How old is Romeo?") and 3 about other books or plays. |
+| `retrieval_cases_test3.json` | 25 | Test questions for the query-rewriting work. Used one time, for the final measurement. 5 of them quote the play (`"type": "quote"`). |
+| `unanswerable_test2.json` | 5 | Unanswerable test questions for the query-rewriting work, used one time: 2 about details that the plays do not give (for example "How old is Romeo?") and 3 about other books or plays. |
 
 The test3 questions were written from the play text only, without the search results or the chunk summaries. Run the test files only one time, after all design choices for the next change.
 
@@ -262,17 +265,61 @@ One run on the unseen test questions, after all design choices: 15 answerable (`
 - **The citation numbers made Phi-4-mini look better than it is.** With the summaries, 18 of its answers cite the reference passage, but only 10 are correct. It often cites the correct passage and then gets the facts wrong (for example, it says that Gertrude dies from Laertes' sword). The better search hardly changed its correct answers (9 → 10).
 - **Hand check of the grader:** 26 grades were compared with a careful human reading. 25 agree fully, and the last one is a little strict ("partial" for a correct answer without one detail). The grader gave "wrong" and "partial" to its own model's answers too, so no strong self-bias showed. It also corrected one error of `evaluate_answers.py`: Phi-4-mini's Othello answer is "partial", not a correct refusal.
 
+### Query rewriting and 8 passages (API mode default)
+
+All 61 development questions (54 answerable, 7 unanswerable), gpt-6.1-terra for the rewrite, the answer, and the grade.
+
+Search only, 54 answerable dev questions:
+
+| Search | Top 5 | Top 8 | MRR |
+|---|---|---|---|
+| Question only | 41 | 43 | 0.615 |
+| Rewrite only | 49 | 52 | 0.791 |
+| **Average of question and rewrite (default)** | **49** | **51** | 0.777 |
+
+The average is almost as good as the rewrite alone. It keeps the exact words of the question, which helps questions that quote the play.
+
+Answers, graded:
+
+| Setup | Answerable: correct / partial / wrong (of 54) | Unanswerable correct (of 7) | Time per question |
+|---|---|---|---|
+| No rewrite, 5 passages | 41 / 8 / 5 | 7 | 3.0 s |
+| Rewrite, 5 passages | 51 / 3 / 0 | 7 | 6.8 s |
+| **Rewrite, 8 passages (default)** | **53 / 1 / 0** | **7** | 6.5 s |
+
+- The one "partial" answer (why Macbeth feels safe in his castle) gave the castle's strength but missed the Birnam Wood prophecy.
+- A hand check of the answers that changed to "correct" agreed with the grader. The grader can vary by about one grade between runs.
+- For questions about other plays, the rewrite only says what the question asks about. So the search finds nothing that fits, and the answer model still refuses.
+- These are development results. The final test is below.
+
+### Final test of query rewriting (test3)
+
+One run on the 30 test3 questions (25 answerable, 5 unanswerable), after all design choices. Nothing was tuned on these questions, so both rows are fair results.
+
+| Setup | Reference among the passages | Answerable: correct / partial / wrong (of 25) | Quote questions correct (of 5) | Unanswerable correct (of 5) | Time |
+|---|---|---|---|---|---|
+| No rewrite, 5 passages | 15 | 19 / 1 / 5 | 1 | 5 | 3.1 s |
+| **Rewrite, 8 passages (default)** | **23** | **24 / 0 / 1** | **4** | **5** | 6.6 s |
+
+- The test result matches the dev result (53 of 54 correct on dev, 24 of 25 on test).
+- **Query rewriting helps quote questions most** (1 → 4 of 5). The question alone often does not find the scene of a quote, but the rewrite names the scene.
+- The one wrong answer ("Why does Juliet say 'O happy dagger'?") is a search miss. The rewrite described the correct scene, but the chunk with the line was not among the 8 passages.
+- The hard unanswerable questions ("How old is Romeo?", "What is the name of Hamlet's dog?") got correct replies: the answers say that the plays do not give this, and mention only related facts.
+- A hand check of the wrong answer, the quote questions, and all unanswerable questions agreed with the grader.
+
 ## Known limits
 
 - **Retrieval still misses some reference passages:** 10 of 39 dev questions and 3 of 15 test2 questions are not in the top 5.
 - **The summaries come from an API model.** To build them again, you need an API key. The summaries can contain small errors or knowledge about the play from outside the passage.
 - **Small local model errors.** Phi-4-mini sometimes adds facts that are not in the passages, mixes up characters, or quotes lines longer than 15 words. With the new search, it also answered 2 of 4 questions about other plays from its own knowledge.
 - **Small question sets.** 54 retrieval questions in total, so one or two questions change a number a lot.
+- **API mode is slower and makes 2 calls per question** (rewrite and answer), about 6–7 seconds. The rewrite uses the model's own knowledge of the plays to name the scene.
 - **The grader is an API model, the same model as the API answer model.** A hand check found no strong self-bias, but a different grader model would be a safer test.
-- **The old test questions are used.** For the next design change, measure on the new test3 and `unanswerable_test2.json` files, one time only.
+- **All test questions are now used**, test3 and `unanswerable_test2.json` too. The next design change needs new, unseen test questions.
 
 ## Ideas for next steps
 
+- Write new test questions before the next design change.
 - Refuse questions about other plays in code, before the LLM, for example with a score threshold.
 - Use a larger local model (for example a 7B model). This needs about 15 GB of memory.
 - Write more evaluation questions, especially questions that quote the play.
