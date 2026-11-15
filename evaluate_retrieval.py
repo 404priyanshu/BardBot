@@ -3,7 +3,14 @@ import json
 from pathlib import Path
 from statistics import median
 
-from search_chunks import RERANK_CANDIDATES, load_index, load_reranker, search
+from search_chunks import (
+    DEFAULT_SUMMARY_WEIGHT,
+    RERANK_CANDIDATES,
+    load_index,
+    load_reranker,
+    load_summary_index,
+    search,
+)
 
 
 def find_expected_indices(case, chunks):
@@ -45,7 +52,13 @@ def main():
     )
     parser.add_argument("--candidates", type=int, default=RERANK_CANDIDATES)
     parser.add_argument("--quiet", action="store_true", help="Print only the summary.")
+    parser.add_argument(
+        "--summary-weight", type=float, default=DEFAULT_SUMMARY_WEIGHT,
+        help="Share of the score from the chunk summaries, 0 to 1 (0 = text only).",
+    )
     args = parser.parse_args()
+    if not 0 <= args.summary_weight <= 1:
+        parser.error("--summary-weight must be between 0 and 1.")
 
     cases = []
     for name in args.cases:
@@ -58,6 +71,7 @@ def main():
 
     model, embeddings, chunks = load_index()
     reranker = load_reranker() if args.rerank else None
+    summary_embeddings = load_summary_index(chunks) if args.summary_weight else None
     references = [find_expected_indices(case, chunks) for case in cases]
     hits = {1: 0, 3: 0, 5: 0, 10: 0}
     ranks = []
@@ -65,12 +79,14 @@ def main():
     print("Evaluation questions:", len(cases))
     print("Chunks searched per question:", len(chunks))
     print("Reranker:", f"on ({args.candidates} candidates)" if args.rerank else "off")
+    print("Summary weight:", args.summary_weight)
     print("Match rule: source + act + scene + reference quote.")
 
     for case, expected in zip(cases, references):
         # Reference metadata is for scoring only, never for filtering search.
         ranked_indices, scores = search(
-            case["question"], model, embeddings, chunks, reranker, args.candidates
+            case["question"], model, embeddings, chunks, reranker, args.candidates,
+            summary_embeddings, args.summary_weight,
         )
         rank = first_relevant_rank(ranked_indices, expected)
         ranks.append(rank)

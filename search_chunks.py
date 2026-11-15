@@ -9,6 +9,17 @@ MODEL_NAME = "BAAI/bge-small-en-v1.5"
 QUERY_INSTRUCTION = "Represent this sentence for searching relevant passages: "
 RERANKER_NAME = "BAAI/bge-reranker-base"
 RERANK_CANDIDATES = 30
+SUMMARY_INDEX_PATH = "data/embeddings/summary_embeddings.npz"
+# Share of the score that comes from the summary vector (0 = text only).
+# Chosen on the 39 dev questions: Hit@5 went from 20 to 29 (weights 0.5-1.0
+# were close). 0.7 keeps some text score for questions that quote the play.
+DEFAULT_SUMMARY_WEIGHT = 0.7
+
+
+def chunk_key(chunk):
+    """A stable ID for a chunk, independent of its position in the file."""
+    return "|".join(str(chunk[field]) for field in
+                    ("source_file", "act", "section", "scene", "chunk_number", "start_word"))
 
 
 def best_device():
@@ -43,7 +54,21 @@ def load_index():
     return model, embeddings, chunks
 
 
-def rank_chunks(question, model, embeddings):
+def load_summary_index(chunks, path=SUMMARY_INDEX_PATH):
+    """Load the summary vectors (embed_summaries.py) in the same order as chunks."""
+    with np.load(path, allow_pickle=False) as saved:
+        embeddings = saved["embeddings"]
+        keys = [str(key) for key in saved["keys"]]
+        if saved["model_name"].item() != MODEL_NAME:
+            raise ValueError("Saved summary embeddings use a different model.")
+    if keys != [chunk_key(chunk) for chunk in chunks]:
+        raise ValueError("Summary embeddings do not match the chunks. Run embed_summaries.py again.")
+    if not np.allclose(np.linalg.norm(embeddings, axis=1), 1.0, atol=1e-6):
+        raise ValueError("Saved summary vectors are not unit length.")
+    return embeddings
+
+
+def rank_chunks(question, model, embeddings, summary_embeddings=None, summary_weight=0.0):
     question = question.strip()
     if not question:
         raise ValueError("Please provide a non-empty question.")
@@ -61,6 +86,11 @@ def rank_chunks(question, model, embeddings):
 
     # For unit-length vectors, dot product equals cosine similarity.
     scores = embeddings @ query_embedding
+    if summary_weight:
+        if summary_embeddings is None:
+            raise ValueError("A summary weight needs the summary embeddings.")
+        summary_scores = summary_embeddings @ query_embedding
+        scores = (1 - summary_weight) * scores + summary_weight * summary_scores
     ranked_indices = np.argsort(-scores, kind="stable")
     return scores, ranked_indices, len(query_tokens)
 
@@ -98,9 +128,12 @@ def rerank_chunks(question, ranked_indices, chunks, reranker, candidates=RERANK_
     return reranked + rest, scores
 
 
-def search(question, model, embeddings, chunks, reranker=None, candidates=RERANK_CANDIDATES):
+def search(question, model, embeddings, chunks, reranker=None, candidates=RERANK_CANDIDATES,
+           summary_embeddings=None, summary_weight=0.0):
     """Return ranked chunk indices and a score for each top index."""
-    scores, ranked_indices, _ = rank_chunks(question, model, embeddings)
+    scores, ranked_indices, _ = rank_chunks(
+        question, model, embeddings, summary_embeddings, summary_weight
+    )
     if reranker is None:
         return [int(index) for index in ranked_indices], {
             int(index): float(scores[index]) for index in ranked_indices
@@ -141,14 +174,21 @@ def main():
 
     model, embeddings, chunks = load_index()
     reranker = load_reranker() if args.rerank else None
+    summary_embeddings = load_summary_index(chunks) if DEFAULT_SUMMARY_WEIGHT else None
     try:
         ranked_indices, scores = search(
-            question, model, embeddings, chunks, reranker, args.candidates
+            question, model, embeddings, chunks, reranker, args.candidates,
+            summary_embeddings, DEFAULT_SUMMARY_WEIGHT,
         )
     except ValueError as error:
         parser.error(str(error))
 
-    score_name = "reranker score" if args.rerank else "cosine similarity"
+    if args.rerank:
+        score_name = "reranker score"
+    elif DEFAULT_SUMMARY_WEIGHT:
+        score_name = f"text + summary score (summary weight {DEFAULT_SUMMARY_WEIGHT})"
+    else:
+        score_name = "cosine similarity"
     print("Question:", question)
     print("Chunks searched:", len(chunks))
     print("Reranker:", f"on ({args.candidates} candidates)" if args.rerank else "off")

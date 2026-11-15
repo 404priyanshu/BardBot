@@ -1,5 +1,7 @@
 """Write an answer from retrieved passages with a local LLM."""
+import os
 import re
+from pathlib import Path
 
 import torch
 from transformers import AutoModelForCausalLM, AutoTokenizer
@@ -12,6 +14,9 @@ transformers_logging.set_verbosity_error()
 
 LLM_NAME = "microsoft/Phi-4-mini-instruct"
 MAX_NEW_TOKENS = 400
+# For API models. Reasoning models count their hidden reasoning as output
+# tokens too, so this limit is much higher than MAX_NEW_TOKENS.
+MAX_API_OUTPUT_TOKENS = 4000
 NO_ANSWER = "The passages do not answer this question."
 
 SYSTEM_PROMPT = f"""You answer questions about three Shakespeare plays: Hamlet, Macbeth, and Romeo and Juliet.
@@ -19,21 +24,26 @@ SYSTEM_PROMPT = f"""You answer questions about three Shakespeare plays: Hamlet, 
 The user gives you numbered passages from the plays and a question. The passages are in Shakespeare's Early Modern English. Each line starts with the name of the character who speaks it. The answer is usually in what a character says, and it is often said indirectly or in poetic language.
 
 How to answer:
-1. Find the passages that are about the topic of the question.
-2. Explain the answer in your own words, in two to four sentences of plain modern English. Start directly with the explanation.
-3. End every sentence with the number of the passage that supports it in square brackets, for example [2] for Passage 2.
-4. You may quote one short line (at most 15 words). Never copy a whole passage or its heading.
-5. Use only the passages. Do not add facts from outside knowledge.
+1. Find the passage that best answers the question. The answer is often only implied by what the characters say.
+2. Copy one short line (at most 15 words) from that passage, exactly as written, as evidence.
+3. Explain the answer in two to four sentences of plain modern English.
+4. End every sentence with the number of the passage that supports it in square brackets, for example [2] for Passage 2.
+5. Use only the passages. Do not add facts from outside knowledge. Never copy a whole passage or its heading.
 
-Most questions can be answered from the passages, even when the answer is only implied by what the characters say. Give the best answer that the passages support. If they support only part of the answer, give that part and say in one sentence what the passages do not show.
+Use this format:
+Evidence: "<the short line>" [n]
+Answer: <your two to four sentences>
 
-Reply exactly "{NO_ANSWER}" only in these two cases:
+Most questions can be answered from the passages. If the passages support only part of the answer, give that part and say in one sentence what they do not show.
+
+Reply exactly "{NO_ANSWER}", without the format above, only in these two cases:
 - The question is not about Hamlet, Macbeth, or Romeo and Juliet.
 - No passage has anything to do with the question.
 
 Example:
 Question: Why does Macbeth hesitate to kill the king?
-Answer: Macbeth fears that the murder will bring punishment in this life and that others will copy his crime against him [1]. He also says Duncan is a good king and his guest, so he should protect him, not kill him [1]."""
+Evidence: "He's here in double trust" [1]
+Answer: Macbeth fears that the murder will bring punishment in this life and that others will copy his crime against him [1]. He also says Duncan trusts him twice, as his relative and as his host, so he should protect him, not kill him [1]."""
 
 
 def load_generator(model_name=LLM_NAME):
@@ -78,7 +88,7 @@ def build_messages(question, chunks):
     # after the long passages.
     user_message = (
         f"Question: {question}\n\nPassages:\n\n{passages}\n\n"
-        f"Question: {question}\nAnswer:"
+        f"Question: {question}"
     )
     return [
         {"role": "system", "content": SYSTEM_PROMPT},
@@ -132,4 +142,64 @@ def generate_answer(question, chunks, tokenizer, model, max_new_tokens=MAX_NEW_T
         "prompt_tokens": int(inputs["input_ids"].shape[1]),
         "answer_tokens": int(new_tokens.shape[0]),
         "hit_token_limit": int(new_tokens.shape[0]) >= max_new_tokens,
+    }
+
+
+ENV_FILE = Path(__file__).resolve().parent / ".env"
+
+
+def read_env_file(path=ENV_FILE):
+    """Copy KEY=value lines from the .env file into os.environ.
+
+    A variable that is already set in the environment wins over the file.
+    """
+    if not path.is_file():
+        return
+    for line in path.read_text(encoding="utf-8").splitlines():
+        line = line.strip()
+        if not line or line.startswith("#") or "=" not in line:
+            continue
+        key, value = line.split("=", 1)
+        key, value = key.strip(), value.strip().strip("'\"")
+        if key and value and not os.environ.get(key):
+            os.environ[key] = value
+
+
+def load_api_client():
+    """Return an OpenAI client. The key comes from OPENAI_API_KEY or the .env file."""
+    try:
+        from openai import OpenAI
+    except ImportError as error:
+        raise RuntimeError(
+            "API mode needs the openai package: .venv/bin/pip install -r requirements.txt"
+        ) from error
+    read_env_file()
+    if not os.environ.get("OPENAI_API_KEY"):
+        raise RuntimeError(
+            "No OpenAI API key found. Paste it after OPENAI_API_KEY= in the .env file."
+        )
+    return OpenAI()
+
+
+def generate_answer_api(question, chunks, client, model, max_output_tokens=MAX_API_OUTPUT_TOKENS):
+    """Same prompt as generate_answer, but an OpenAI API model writes the answer."""
+    if not chunks:
+        raise ValueError("At least one passage is needed to answer.")
+
+    system_message, user_message = build_messages(question, chunks)
+    response = client.responses.create(
+        model=model,
+        instructions=system_message["content"],
+        input=user_message["content"],
+        max_output_tokens=max_output_tokens,
+    )
+    text = response.output_text.strip()
+    usage = response.usage
+    details = response.incomplete_details
+    return {
+        "answer": text,
+        "cited": cited_numbers(text, len(chunks)),
+        "prompt_tokens": usage.input_tokens if usage else None,
+        "answer_tokens": usage.output_tokens if usage else None,
+        "hit_token_limit": bool(details and details.reason == "max_output_tokens"),
     }

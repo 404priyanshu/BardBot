@@ -4,3 +4,5 @@ transformers==5.22.2
 torch==2.15.0
 numpy==2.5.4
 huggingface_hub==2.4.0
+# Only for the optional API mode (--api-model).
+openai==3.51.0

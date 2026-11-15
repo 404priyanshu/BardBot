@@ -79,8 +79,19 @@ def main():
         "cases", nargs="*", default=DEV_FILES + TEST_FILES,
         help="Question files (default: all dev and test files).",
     )
-    parser.add_argument("--output", default="data/evaluation/answers.jsonl")
+    parser.add_argument(
+        "--output", default=None,
+        help="Default: data/evaluation/answers.jsonl, or answers_api.jsonl with --api-model.",
+    )
+    parser.add_argument("--top-k", type=int, default=None, help="Passages sent to the LLM.")
+    parser.add_argument(
+        "--api-model", metavar="MODEL_ID",
+        help="Write answers with this OpenAI API model. Needs OPENAI_API_KEY. Costs money.",
+    )
     args = parser.parse_args()
+    if args.output is None:
+        name = "answers_api.jsonl" if args.api_model else "answers.jsonl"
+        args.output = f"data/evaluation/{name}"
 
     cases = []
     for name in args.cases:
@@ -91,7 +102,15 @@ def main():
     if not cases:
         raise ValueError("No evaluation questions found.")
 
-    bot = BardBot()
+    options = {"api_model": args.api_model}
+    if args.top_k is not None:
+        options["top_k"] = args.top_k
+    try:
+        bot = BardBot(**options)
+    except RuntimeError as error:
+        parser.error(str(error))
+    print("Answers by:", bot.llm_name)
+    print("Passages sent to the LLM:", bot.top_k)
     records = []
 
     with open(args.output, "w", encoding="utf-8") as output_file:
@@ -106,6 +125,7 @@ def main():
             record = {
                 "id": case["id"],
                 "set": case["set"],
+                "llm": bot.llm_name,
                 "answerable": answerable,
                 "question": case["question"],
                 "reference_quote": case.get("anchor"),
