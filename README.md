@@ -198,31 +198,34 @@ The summaries almost double the MRR on both sets.
 
 ### Answers
 
-These results use the "Evidence first" prompt in `answer.py` and the old search (W = 0), on the 43 development questions. The same passages went to both models.
+These results use the "Evidence first" prompt in `answer.py`, on the 43 development questions (39 answerable, 4 unanswerable). With the same search, the same passages went to both models.
 
-| 39 answerable + 4 unanswerable | Phi-4-mini (local) | gpt-6.1-terra (API) |
-|---|---|---|
-| Reference passage among the 5 | 20 | 20 |
-| Answer cites the reference, when it was among the 5 | 11 of 20 | **20 of 20** |
-| "No answer" replies to answerable questions | 2 | 4 |
-| Unanswerable questions handled correctly | 4 of 4 | 4 of 4 * |
-| Average time per question | 3.6 s | 3.9 s |
+| | Phi-4-mini, old search | gpt-6.1-terra, old search | Phi-4-mini, summaries | gpt-6.1-terra, summaries |
+|---|---|---|---|---|
+| Reference passage among the 5 | 20 | 20 | 29 | 29 |
+| **Answer cites the reference** | 11 | 20 | 18 | **28** |
+| "No answer" replies to answerable questions | 2 | 4 | 0 | 0 |
+| Unanswerable questions handled correctly | 4 of 4 | 4 of 4 * | 2 of 4 | 4 of 4 * |
+| Average time per question | 3.6 s | 3.9 s | 4.4 s | 2.9 s |
 
-\* The script counts 3 of 4, but the fourth answer said clearly that the passages do not answer the question.
+\* The script counts 3 of 4. But the fourth answer ("What does Macbeth eat for breakfast?") said clearly that the passages do not say this, so it was correct.
 
-With the old prompt, Phi-4-mini replied "no answer" to 13 of the 16 test questions. The "Evidence first" prompt fixed this for both models. When the reference passage is missing, the API model usually says what the passages do not show. The local model usually gives an answer from the wrong passages.
+- With the old prompt, Phi-4-mini replied "no answer" to 13 of the 16 test questions. The "Evidence first" prompt fixed this for both models.
+- With the summaries and gpt-6.1-terra, 28 of 39 answers cite the reference passage. In the one case where it did not, it cited the next chunk of the same scene, and the answer was correct.
+- With the summaries, Phi-4-mini answered 2 questions about other plays (Julius Caesar and The Tempest) from its own knowledge. The new search found loosely related passages, and the small model did not refuse.
 
 ## Known limits
 
 - **Retrieval still misses some reference passages:** 10 of 39 dev questions and 3 of 15 test2 questions are not in the top 5.
 - **The summaries come from an API model.** To build them again, you need an API key. The summaries can contain small errors or knowledge about the play from outside the passage.
-- **Small local model errors.** Phi-4-mini sometimes adds facts that are not in the passages, mixes up characters, or quotes lines longer than 15 words.
+- **Small local model errors.** Phi-4-mini sometimes adds facts that are not in the passages, mixes up characters, or quotes lines longer than 15 words. With the new search, it also answered 2 of 4 questions about other plays from its own knowledge.
 - **Small question sets.** 54 retrieval questions in total, so one or two questions change a number a lot.
-- **The answer results above use the old search.** Run `evaluate_answers.py` again to measure the answers with the summaries.
+- **The answer results use only development questions.** The test2 and `unanswerable_test.json` answers were not measured.
 
 ## Ideas for next steps
 
-- Measure the answers again with the new search.
+- Measure the answers one time on the test questions (test2 and `unanswerable_test.json`).
+- Refuse questions about other plays in code, before the LLM, for example with a score threshold.
 - Use a larger local model (for example a 7B model). This needs about 15 GB of memory.
 - Write more evaluation questions, especially questions that quote the play.
 - Try a stronger embedding model, or smaller chunks.
