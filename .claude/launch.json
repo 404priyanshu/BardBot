@@ -1,0 +1,11 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "bardbot-webui",
+      "runtimeExecutable": ".venv/bin/python",
+      "runtimeArgs": ["webui.py"],
+      "port": 7860
+    }
+  ]
+}

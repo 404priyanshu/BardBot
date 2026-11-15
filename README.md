@@ -48,6 +48,22 @@ Start the command without a question to ask several questions, one at a time. Ty
 
 The output shows the answer, then the sources. A `*` marks each source that the answer cites. One question takes about 4 seconds on an M5 Pro.
 
+## Ask in the browser
+
+```bash
+.venv/bin/python webui.py
+```
+
+When the terminal shows the address, open http://127.0.0.1:7860 in your browser.
+
+- Type a question, or click an example question.
+- Under each answer, a `✓` marks each source that the answer cites. Click a source to read the full passage.
+- Each question is separate. BardBot does not remember earlier questions.
+- The page runs only on your computer. Other computers cannot open it.
+- Press Ctrl+C in the terminal to stop the page.
+
+`webui.py` accepts the same `--top-k`, `--rerank`, `--model`, and `--api-model` options as `bardbot.py`. Use `--port N` to use another port, and `--open` to open the browser automatically.
+
 ## API mode (optional)
 
 In API mode, an OpenAI model writes the answer. The search still runs on your computer, and the prompt is the same as for the local LLM. Each question costs money and needs an internet connection.
@@ -101,6 +117,7 @@ Other scripts:
 
 - `search_chunks.py`: search only, without an answer.
 - `answer.py`: the prompt and the LLM call.
+- `webui.py`: the chat page in the browser.
 - `inspect_play.py` and `embed_one_chunk.py`: small demo scripts.
 
 ## Evaluation
