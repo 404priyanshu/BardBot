@@ -118,6 +118,7 @@ Other scripts:
 - `search_chunks.py`: search only, without an answer.
 - `answer.py`: the prompt and the LLM call.
 - `webui.py`: the chat page in the browser.
+- `grade_answers.py`: grades saved answers as correct, partial, or wrong with an API model (see Evaluation).
 - `inspect_play.py` and `embed_one_chunk.py`: small demo scripts.
 
 ## Evaluation
@@ -143,7 +144,15 @@ Commands:
 .venv/bin/python evaluate_answers.py
 ```
 
-`evaluate_answers.py` saves every answer in `data/evaluation/answers.jsonl`. Its numbers only check citations, not if an answer is correct. Read the answers to judge that.
+`evaluate_answers.py` saves every answer in `data/evaluation/answers.jsonl`. Its numbers only check citations, not if an answer is correct.
+
+To check if the answers are correct, grade them with an API model. This needs an API key and costs less than one cent per answer:
+
+```bash
+.venv/bin/python grade_answers.py --model gpt-6.1-terra data/evaluation/answers_api_summaries.jsonl
+```
+
+For each answer, the grader sees the question, the reference passage, and the answer, but not the passages that BardBot got. It gives one grade (correct, partial, or wrong) and a short reason. The grades go to `data/evaluation/grades/`. Read some reasons by hand before you trust the numbers.
 
 ## Results
 
@@ -236,17 +245,34 @@ One run on the unseen test questions, after all design choices: 15 answerable (`
 - gpt-6.1-terra cited the reference every time that the search found it. Its 3 misses are search misses. For 2 of them, it still gave a correct partial answer from nearby passages, and for the third it said what the passages do not show.
 - Phi-4-mini once replied "no answer" when the reference was the first passage, and it answered a question about another play.
 
+### Correctness grades
+
+`grade_answers.py` with gpt-6.1-terra as the grader. All of these questions are development questions now (test2 was used for the final test above).
+
+| Run | Answerable: correct / partial / wrong | Unanswerable: correct / partial / wrong |
+|---|---|---|
+| Phi-4-mini, old search (43 dev) | 9 / 11 / 19 | 4 / 0 / 0 |
+| gpt-6.1-terra, old search (43 dev) | 23 / 2 / 14 | 4 / 0 / 0 |
+| Phi-4-mini, summaries (43 dev) | 10 / 9 / 20 | 2 / 0 / 2 |
+| **gpt-6.1-terra, summaries (43 dev)** | **30 / 5 / 4** | **4 / 0 / 0** |
+| Phi-4-mini, summaries (test2 + 3) | 5 / 5 / 5 | 1 / 1 / 1 |
+| gpt-6.1-terra, summaries (test2 + 3) | 11 / 3 / 1 | 3 / 0 / 0 |
+
+- **gpt-6.1-terra with the summaries is correct for 30 of 39 dev questions** (old search: 23), and wrong for only 4.
+- **The citation numbers made Phi-4-mini look better than it is.** With the summaries, 18 of its answers cite the reference passage, but only 10 are correct. It often cites the correct passage and then gets the facts wrong (for example, it says that Gertrude dies from Laertes' sword). The better search hardly changed its correct answers (9 → 10).
+- **Hand check of the grader:** 26 grades were compared with a careful human reading. 25 agree fully, and the last one is a little strict ("partial" for a correct answer without one detail). The grader gave "wrong" and "partial" to its own model's answers too, so no strong self-bias showed. It also corrected one error of `evaluate_answers.py`: Phi-4-mini's Othello answer is "partial", not a correct refusal.
+
 ## Known limits
 
 - **Retrieval still misses some reference passages:** 10 of 39 dev questions and 3 of 15 test2 questions are not in the top 5.
 - **The summaries come from an API model.** To build them again, you need an API key. The summaries can contain small errors or knowledge about the play from outside the passage.
 - **Small local model errors.** Phi-4-mini sometimes adds facts that are not in the passages, mixes up characters, or quotes lines longer than 15 words. With the new search, it also answered 2 of 4 questions about other plays from its own knowledge.
 - **Small question sets.** 54 retrieval questions in total, so one or two questions change a number a lot.
+- **The grader is an API model, the same model as the API answer model.** A hand check found no strong self-bias, but a different grader model would be a safer test.
 - **The old test questions are used.** For the next design change, measure on the new test3 and `unanswerable_test2.json` files, one time only.
 
 ## Ideas for next steps
 
-- Check if each answer is correct, not only which passage it cites, for example with an API model as a grader.
 - Refuse questions about other plays in code, before the LLM, for example with a score threshold.
 - Use a larger local model (for example a 7B model). This needs about 15 GB of memory.
 - Write more evaluation questions, especially questions that quote the play.
