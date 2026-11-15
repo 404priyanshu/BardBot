@@ -18,6 +18,7 @@ from answer import (  # noqa: E402
     labelled_passage,
     load_api_client,
     load_generator,
+    rewrite_query,
 )
 from search_chunks import (  # noqa: E402
     DEFAULT_SUMMARY_WEIGHT,
@@ -31,19 +32,36 @@ from search_chunks import (  # noqa: E402
 )
 
 
+# Passages sent to the LLM. On the 54 dev questions with query rewriting,
+# gpt-6.1-terra was correct for 53 with 8 passages and 51 with 5. The local
+# model keeps 5, because more text makes its prompt longer and slower.
+DEFAULT_TOP_K_API = 8
+DEFAULT_TOP_K_LOCAL = 5
+
+
 class BardBot:
-    def __init__(self, rerank=False, candidates=RERANK_CANDIDATES, top_k=5, model_name=LLM_NAME,
-                 api_model=None, summary_weight=DEFAULT_SUMMARY_WEIGHT):
+    def __init__(self, rerank=False, candidates=RERANK_CANDIDATES, top_k=None, model_name=LLM_NAME,
+                 api_model=None, summary_weight=DEFAULT_SUMMARY_WEIGHT, rewrite=None):
         """api_model: an OpenAI model ID. When set, the API writes the answers
         and the local LLM is not loaded. The search always runs locally.
-        summary_weight: share of the search score from the chunk summaries."""
+        summary_weight: share of the search score from the chunk summaries.
+        rewrite: let the API model describe the scene before the search
+        (answer.rewrite_query). Default: on in API mode, off otherwise.
+        top_k: passages sent to the LLM. Default: 8 in API mode, 5 otherwise."""
+        if top_k is None:
+            top_k = DEFAULT_TOP_K_API if api_model else DEFAULT_TOP_K_LOCAL
         if top_k <= 0:
             raise ValueError("top_k must be positive.")
         if not 0 <= summary_weight <= 1:
             raise ValueError("summary_weight must be between 0 and 1.")
+        if rewrite is None:
+            rewrite = bool(api_model)
+        if rewrite and not api_model:
+            raise ValueError("Query rewriting needs API mode (--api-model).")
         self.candidates = candidates
         self.top_k = top_k
         self.summary_weight = summary_weight
+        self.rewrite = rewrite
         self.api_model = api_model
         self.llm_name = api_model or model_name
         # Check the API settings first, before the slow model loads.
@@ -56,11 +74,11 @@ class BardBot:
         else:
             self.tokenizer, self.llm = load_generator(model_name)
 
-    def retrieve(self, question):
+    def retrieve(self, question, rewrite=None):
         ranked_indices, _ = search(
             question, self.embedder, self.embeddings, self.chunks,
             self.reranker, self.candidates,
-            self.summary_embeddings, self.summary_weight,
+            self.summary_embeddings, self.summary_weight, rewrite,
         )
         return ranked_indices[:self.top_k]
 
@@ -69,7 +87,8 @@ class BardBot:
         if not question:
             raise ValueError("Please ask a non-empty question.")
         start = time.perf_counter()
-        indices = self.retrieve(question)
+        rewrite = rewrite_query(question, self.api_client, self.api_model) if self.rewrite else None
+        indices = self.retrieve(question, rewrite)
         passages = [self.chunks[index] for index in indices]
         if self.api_model:
             result = generate_answer_api(question, passages, self.api_client, self.api_model)
@@ -77,6 +96,7 @@ class BardBot:
             result = generate_answer(question, passages, self.tokenizer, self.llm)
         result.update({
             "question": question,
+            "rewrite": rewrite,
             "passage_indices": indices,
             "passages": passages,
             "seconds": time.perf_counter() - start,
@@ -103,7 +123,8 @@ def print_result(result, show_passages=False):
 def main():
     parser = argparse.ArgumentParser(description="Answer questions about three Shakespeare plays.")
     parser.add_argument("question", nargs="?", help="Leave out to start a chat loop.")
-    parser.add_argument("--top-k", type=int, default=5, help="Passages sent to the LLM.")
+    parser.add_argument("--top-k", type=int, default=None,
+                        help="Passages sent to the LLM (default: 8 in API mode, 5 otherwise).")
     parser.add_argument(
         "--rerank", action=argparse.BooleanOptionalAction, default=False,
         help="Re-score search results with the reranker (default: off; it did not "
@@ -122,6 +143,11 @@ def main():
         help=f"Share of the search score from the chunk summaries, 0 to 1 "
              f"(default {DEFAULT_SUMMARY_WEIGHT}; 0 = text only).",
     )
+    parser.add_argument(
+        "--rewrite", action=argparse.BooleanOptionalAction, default=None,
+        help="Let the API model describe the scene before the search "
+             "(default: on with --api-model; needs --api-model).",
+    )
     args = parser.parse_args()
 
     if args.question is not None and not args.question.strip():
@@ -130,7 +156,7 @@ def main():
     print("Loading models...")
     try:
         bot = BardBot(args.rerank, args.candidates, args.top_k, args.model, args.api_model,
-                      args.summary_weight)
+                      args.summary_weight, args.rewrite)
     except (RuntimeError, ValueError) as error:
         parser.error(str(error))
     print("Answers by:", bot.llm_name)

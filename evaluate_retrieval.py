@@ -56,9 +56,17 @@ def main():
         "--summary-weight", type=float, default=DEFAULT_SUMMARY_WEIGHT,
         help="Share of the score from the chunk summaries, 0 to 1 (0 = text only).",
     )
+    parser.add_argument(
+        "--rewrite-model", metavar="MODEL_ID",
+        help="Rewrite each question with this OpenAI API model before the search. Costs money.",
+    )
     args = parser.parse_args()
     if not 0 <= args.summary_weight <= 1:
         parser.error("--summary-weight must be between 0 and 1.")
+    client = None
+    if args.rewrite_model:
+        from answer import load_api_client  # Only needed for query rewriting.
+        client = load_api_client()
 
     cases = []
     for name in args.cases:
@@ -80,13 +88,18 @@ def main():
     print("Chunks searched per question:", len(chunks))
     print("Reranker:", f"on ({args.candidates} candidates)" if args.rerank else "off")
     print("Summary weight:", args.summary_weight)
+    print("Query rewriting:", args.rewrite_model or "off")
     print("Match rule: source + act + scene + reference quote.")
 
     for case, expected in zip(cases, references):
+        rewrite = None
+        if client:
+            from answer import rewrite_query
+            rewrite = rewrite_query(case["question"], client, args.rewrite_model)
         # Reference metadata is for scoring only, never for filtering search.
         ranked_indices, scores = search(
             case["question"], model, embeddings, chunks, reranker, args.candidates,
-            summary_embeddings, args.summary_weight,
+            summary_embeddings, args.summary_weight, rewrite,
         )
         rank = first_relevant_rank(ranked_indices, expected)
         ranks.append(rank)

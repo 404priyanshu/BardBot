@@ -68,15 +68,12 @@ def load_summary_index(chunks, path=SUMMARY_INDEX_PATH):
     return embeddings
 
 
-def rank_chunks(question, model, embeddings, summary_embeddings=None, summary_weight=0.0):
-    question = question.strip()
-    if not question:
-        raise ValueError("Please provide a non-empty question.")
-
-    query_text = QUERY_INSTRUCTION + question
+def score_query(text, model, embeddings, summary_embeddings=None, summary_weight=0.0):
+    """Score every chunk for one query text. Returns the scores and the token count."""
+    query_text = QUERY_INSTRUCTION + text
     query_tokens = model.tokenizer(query_text, truncation=False)["input_ids"]
     if len(query_tokens) > model.max_seq_length:
-        raise ValueError("Question plus retrieval instruction exceeds the model's token limit.")
+        raise ValueError("Query plus retrieval instruction exceeds the model's token limit.")
 
     query_embedding = model.encode(
         query_text,
@@ -91,8 +88,29 @@ def rank_chunks(question, model, embeddings, summary_embeddings=None, summary_we
             raise ValueError("A summary weight needs the summary embeddings.")
         summary_scores = summary_embeddings @ query_embedding
         scores = (1 - summary_weight) * scores + summary_weight * summary_scores
+    return scores, len(query_tokens)
+
+
+def rank_chunks(question, model, embeddings, summary_embeddings=None, summary_weight=0.0,
+                rewrite=None):
+    """Rank all chunks for a question.
+
+    rewrite: an optional modern description of the scene (answer.rewrite_query).
+    When given, the score is the average of the question score and the
+    rewrite score. The question score keeps the exact words, for example a quote.
+    """
+    question = question.strip()
+    if not question:
+        raise ValueError("Please provide a non-empty question.")
+
+    scores, token_count = score_query(question, model, embeddings, summary_embeddings,
+                                      summary_weight)
+    if rewrite and rewrite.strip():
+        rewrite_scores, _ = score_query(rewrite.strip(), model, embeddings, summary_embeddings,
+                                        summary_weight)
+        scores = (scores + rewrite_scores) / 2
     ranked_indices = np.argsort(-scores, kind="stable")
-    return scores, ranked_indices, len(query_tokens)
+    return scores, ranked_indices, token_count
 
 
 def load_reranker():
@@ -129,10 +147,10 @@ def rerank_chunks(question, ranked_indices, chunks, reranker, candidates=RERANK_
 
 
 def search(question, model, embeddings, chunks, reranker=None, candidates=RERANK_CANDIDATES,
-           summary_embeddings=None, summary_weight=0.0):
+           summary_embeddings=None, summary_weight=0.0, rewrite=None):
     """Return ranked chunk indices and a score for each top index."""
     scores, ranked_indices, _ = rank_chunks(
-        question, model, embeddings, summary_embeddings, summary_weight
+        question, model, embeddings, summary_embeddings, summary_weight, rewrite
     )
     if reranker is None:
         return [int(index) for index in ranked_indices], {

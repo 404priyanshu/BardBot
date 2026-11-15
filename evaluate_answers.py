@@ -28,7 +28,8 @@ DEV_FILES = [
     "data/evaluation/retrieval_cases_test2.json",
     "data/evaluation/unanswerable_test.json",
 ]
-# Unused. Run them only for the final measurement of the next design change.
+# Used one time, for the final test of query rewriting. Add new, unseen test
+# questions here before the next design change.
 TEST_FILES = [
     "data/evaluation/retrieval_cases_test3.json",
     "data/evaluation/unanswerable_test2.json",
@@ -92,6 +93,10 @@ def main():
         "--api-model", metavar="MODEL_ID",
         help="Write answers with this OpenAI API model. Needs OPENAI_API_KEY. Costs money.",
     )
+    parser.add_argument(
+        "--rewrite", action=argparse.BooleanOptionalAction, default=None,
+        help="Query rewriting before the search (default: on with --api-model).",
+    )
     args = parser.parse_args()
     if args.output is None:
         name = "answers_api.jsonl" if args.api_model else "answers.jsonl"
@@ -106,15 +111,16 @@ def main():
     if not cases:
         raise ValueError("No evaluation questions found.")
 
-    options = {"api_model": args.api_model}
+    options = {"api_model": args.api_model, "rewrite": args.rewrite}
     if args.top_k is not None:
         options["top_k"] = args.top_k
     try:
         bot = BardBot(**options)
-    except RuntimeError as error:
+    except (RuntimeError, ValueError) as error:
         parser.error(str(error))
     print("Answers by:", bot.llm_name)
     print("Passages sent to the LLM:", bot.top_k)
+    print("Query rewriting:", "on" if bot.rewrite else "off")
     records = []
 
     with open(args.output, "w", encoding="utf-8") as output_file:
@@ -132,6 +138,7 @@ def main():
                 "llm": bot.llm_name,
                 "answerable": answerable,
                 "question": case["question"],
+                "rewrite": result.get("rewrite"),
                 "reference_quote": case.get("anchor"),
                 "answer": result["answer"],
                 "cited": result["cited"],

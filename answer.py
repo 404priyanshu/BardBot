@@ -181,6 +181,28 @@ def load_api_client():
     return OpenAI()
 
 
+REWRITE_INSTRUCTIONS = """You help a search engine find passages in three Shakespeare plays: Hamlet, Macbeth, and Romeo and Juliet.
+
+Rewrite the user's question as a short description of the scene that answers it, in 2 sentences of plain modern English. Name the play, the characters who speak, and what happens. Use the words that a summary of that scene would use.
+
+If the question is not about these three plays, describe what the question asks about in 1 sentence. Reply with the description only."""
+
+
+def rewrite_query(question, client, model):
+    """Describe the scene that answers the question, in modern words, for the search.
+
+    The chunk summaries are in modern words too, so this description finds
+    the right chunk more often than the question alone.
+    """
+    response = client.responses.create(
+        model=model,
+        instructions=REWRITE_INSTRUCTIONS,
+        input=question,
+        max_output_tokens=2000,
+    )
+    return " ".join(response.output_text.split())
+
+
 def generate_answer_api(question, chunks, client, model, max_output_tokens=MAX_API_OUTPUT_TOKENS):
     """Same prompt as generate_answer, but an OpenAI API model writes the answer."""
     if not chunks:
