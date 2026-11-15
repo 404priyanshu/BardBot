@@ -214,17 +214,35 @@ These results use the "Evidence first" prompt in `answer.py`, on the 43 developm
 - With the summaries and gpt-6.1-terra, 28 of 39 answers cite the reference passage. In the one case where it did not, it cited the next chunk of the same scene, and the answer was correct.
 - With the summaries, Phi-4-mini answered 2 questions about other plays (Julius Caesar and The Tempest) from its own knowledge. The new search found loosely related passages, and the small model did not refuse.
 
+### Final test (answers)
+
+One run on the unseen test questions, after all design choices: 15 answerable (`retrieval_cases_test2.json`) and 3 unanswerable (`unanswerable_test.json`). Both models used the summary search (W = 0.7).
+
+| Test (15 + 3) | Phi-4-mini | gpt-6.1-terra |
+|---|---|---|
+| Reference passage among the 5 | 12 | 12 |
+| **Answer cites the reference** | 10 | **12** |
+| "No answer" replies to answerable questions | 2 | 0 |
+| Unanswerable questions handled correctly | 1 of 3 * | 3 of 3 |
+| Average time per question | 4.1 s | 3.0 s |
+
+\* The script counts 2 of 3. But Phi-4-mini answered the Othello question from its own knowledge, and for the King Lear question it repeated one line until the token limit.
+
+- The test result matches the dev result: gpt-6.1-terra cited the reference in 12 of 15 test questions (80%) and 28 of 39 dev questions (72%).
+- gpt-6.1-terra cited the reference every time that the search found it. Its 3 misses are search misses. For 2 of them, it still gave a correct partial answer from nearby passages, and for the third it said what the passages do not show.
+- Phi-4-mini once replied "no answer" when the reference was the first passage, and it answered a question about another play.
+
 ## Known limits
 
 - **Retrieval still misses some reference passages:** 10 of 39 dev questions and 3 of 15 test2 questions are not in the top 5.
 - **The summaries come from an API model.** To build them again, you need an API key. The summaries can contain small errors or knowledge about the play from outside the passage.
 - **Small local model errors.** Phi-4-mini sometimes adds facts that are not in the passages, mixes up characters, or quotes lines longer than 15 words. With the new search, it also answered 2 of 4 questions about other plays from its own knowledge.
 - **Small question sets.** 54 retrieval questions in total, so one or two questions change a number a lot.
-- **The answer results use only development questions.** The test2 and `unanswerable_test.json` answers were not measured.
+- **The test questions are now used.** Any new design change needs new, unseen test questions for a fair measurement.
 
 ## Ideas for next steps
 
-- Measure the answers one time on the test questions (test2 and `unanswerable_test.json`).
+- Write new test questions before the next design change.
 - Refuse questions about other plays in code, before the LLM, for example with a score threshold.
 - Use a larger local model (for example a 7B model). This needs about 15 GB of memory.
 - Write more evaluation questions, especially questions that quote the play.
