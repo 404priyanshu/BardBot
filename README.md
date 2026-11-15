@@ -122,15 +122,19 @@ Other scripts:
 
 ## Evaluation
 
-Three question sets are in `data/evaluation/`. Each question has a reference quote from the scene that answers it.
+The question sets are in `data/evaluation/`. Each answerable question has a reference quote from the scene that answers it.
 
 | File | Questions | Use |
 |---|---|---|
 | `retrieval_cases.json` | 5 | Original development questions |
 | `retrieval_cases_holdout.json` | 18 | More development questions |
 | `retrieval_cases_test.json` | 16 | Test questions. Written before the reranker work. Later used as development questions for the summary work. |
-| `retrieval_cases_test2.json` | 15 | Test questions for the summary work. Used one time only, for the final measurement. |
-| `unanswerable_dev.json`, `unanswerable_test.json` | | Questions that the plays do not answer. The correct reply is "no answer". |
+| `retrieval_cases_test2.json` | 15 | Test questions for the summary work. Used one time, for the final measurement. Now development questions. |
+| `unanswerable_dev.json`, `unanswerable_test.json` | 4, 3 | Questions that the plays do not answer. The correct reply is "no answer". Both are now development questions. |
+| `retrieval_cases_test3.json` | 25 | **Unused test questions** for the next design change. 5 of them quote the play (`"type": "quote"`). |
+| `unanswerable_test2.json` | 5 | **Unused** unanswerable test questions: 2 about details that the plays do not give (for example "How old is Romeo?") and 3 about other books or plays. |
+
+The test3 questions were written from the play text only, without the search results or the chunk summaries. Run the test files only one time, after all design choices for the next change.
 
 Commands:
 
@@ -238,11 +242,11 @@ One run on the unseen test questions, after all design choices: 15 answerable (`
 - **The summaries come from an API model.** To build them again, you need an API key. The summaries can contain small errors or knowledge about the play from outside the passage.
 - **Small local model errors.** Phi-4-mini sometimes adds facts that are not in the passages, mixes up characters, or quotes lines longer than 15 words. With the new search, it also answered 2 of 4 questions about other plays from its own knowledge.
 - **Small question sets.** 54 retrieval questions in total, so one or two questions change a number a lot.
-- **The test questions are now used.** Any new design change needs new, unseen test questions for a fair measurement.
+- **The old test questions are used.** For the next design change, measure on the new test3 and `unanswerable_test2.json` files, one time only.
 
 ## Ideas for next steps
 
-- Write new test questions before the next design change.
+- Check if each answer is correct, not only which passage it cites, for example with an API model as a grader.
 - Refuse questions about other plays in code, before the LLM, for example with a score threshold.
 - Use a larger local model (for example a 7B model). This needs about 15 GB of memory.
 - Write more evaluation questions, especially questions that quote the play.

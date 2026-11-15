@@ -1,0 +1,27 @@
+[
+  {
+    "id": "none_hamlet_dog",
+    "question": "What is the name of Hamlet's dog?",
+    "answerable": false
+  },
+  {
+    "id": "none_romeo_age",
+    "question": "How old is Romeo?",
+    "answerable": false
+  },
+  {
+    "id": "none_puck",
+    "question": "What does Puck do with the love flower in A Midsummer Night's Dream?",
+    "answerable": false
+  },
+  {
+    "id": "none_shylock",
+    "question": "How much money does Antonio borrow from Shylock?",
+    "answerable": false
+  },
+  {
+    "id": "none_scrooge",
+    "question": "Which ghosts visit Scrooge on Christmas Eve?",
+    "answerable": false
+  }
+]
