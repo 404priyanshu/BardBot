@@ -1,0 +1,122 @@
+[
+  {
+    "id": "hamlet_sent_to_england",
+    "question": "Why does Claudius send Hamlet to England, and what does he secretly want to happen there?",
+    "source_file": "hamlet.xml",
+    "act": "ACT IV",
+    "scene": "SCENE III.  Another room in the castle.",
+    "anchor": "Do it, England"
+  },
+  {
+    "id": "hamlet_pirates",
+    "question": "How does Hamlet get back to Denmark after he is sent away by ship?",
+    "source_file": "hamlet.xml",
+    "act": "ACT IV",
+    "scene": "SCENE VI.  Another room in the castle.",
+    "anchor": "a pirate of very warlike appointment"
+  },
+  {
+    "id": "hamlet_ophelia_flowers",
+    "question": "What does Ophelia give out to people while she is mad?",
+    "source_file": "hamlet.xml",
+    "act": "ACT IV",
+    "scene": "SCENE V.  Elsinore. A room in the castle.",
+    "anchor": "There's rosemary, that's for remembrance"
+  },
+  {
+    "id": "hamlet_nunnery",
+    "question": "What does Hamlet tell Ophelia to do when he rejects her?",
+    "source_file": "hamlet.xml",
+    "act": "ACT III",
+    "scene": "SCENE I.  A room in the castle.",
+    "anchor": "Get thee to a nunnery"
+  },
+  {
+    "id": "hamlet_piece_of_work",
+    "question": "How does Hamlet describe his loss of joy to his two old school friends?",
+    "source_file": "hamlet.xml",
+    "act": "ACT II",
+    "scene": "SCENE II.  A room in the castle.",
+    "anchor": "What a piece of work is a man"
+  },
+  {
+    "id": "macbeth_new_cawdor",
+    "question": "Who gets the title of Thane of Cawdor after the battle, and what happens to the old thane?",
+    "source_file": "macbeth.xml",
+    "act": "ACT I",
+    "scene": "SCENE II.  A camp near Forres.",
+    "anchor": "with his former title greet Macbeth"
+  },
+  {
+    "id": "macbeth_persuaded",
+    "question": "How does Lady Macbeth persuade her husband to go ahead with the murder?",
+    "source_file": "macbeth.xml",
+    "act": "ACT I",
+    "scene": "SCENE VII.  Macbeth's castle.",
+    "anchor": "screw your courage to the sticking-place"
+  },
+  {
+    "id": "macbeth_fears_banquo",
+    "question": "Why does Macbeth want Banquo dead?",
+    "source_file": "macbeth.xml",
+    "act": "ACT III",
+    "scene": "SCENE I.  Forres. The palace.",
+    "anchor": "To be thus is nothing"
+  },
+  {
+    "id": "macbeth_fleance_escapes",
+    "question": "Who escapes when the murderers attack Banquo?",
+    "source_file": "macbeth.xml",
+    "act": "ACT III",
+    "scene": "SCENE III.  A park near the palace.",
+    "anchor": "Fly, good Fleance, fly, fly, fly"
+  },
+  {
+    "id": "macbeth_young_siward",
+    "question": "Whom does Macbeth kill in the final battle before he meets Macduff?",
+    "source_file": "macbeth.xml",
+    "act": "ACT V",
+    "scene": "SCENE VII.  Another part of the field.",
+    "anchor": "Thou wast born of woman"
+  },
+  {
+    "id": "romeo_nurse_delay",
+    "question": "Why does Juliet get impatient when the nurse comes back with Romeo's message?",
+    "source_file": "romeo_and_juliet.xml",
+    "act": "ACT II",
+    "scene": "SCENE V.  Capulet's orchard.",
+    "anchor": "Jesu, what haste? can you not stay awhile"
+  },
+  {
+    "id": "romeo_friar_surprised",
+    "question": "Why is the friar surprised when Romeo asks him to arrange a marriage?",
+    "source_file": "romeo_and_juliet.xml",
+    "act": "ACT II",
+    "scene": "SCENE III.  Friar Laurence's cell.",
+    "anchor": "Holy Saint Francis, what a change is here"
+  },
+  {
+    "id": "romeo_juliet_tybalt_news",
+    "question": "How does Juliet react when she hears that Romeo killed her cousin?",
+    "source_file": "romeo_and_juliet.xml",
+    "act": "ACT III",
+    "scene": "SCENE II.  Capulet's orchard.",
+    "anchor": "O serpent heart, hid with a flowering face"
+  },
+  {
+    "id": "romeo_paris_match",
+    "question": "How does Capulet decide that Juliet will marry Paris?",
+    "source_file": "romeo_and_juliet.xml",
+    "act": "ACT III",
+    "scene": "SCENE IV.  A room in Capulet's house.",
+    "anchor": "I will make a desperate tender"
+  },
+  {
+    "id": "romeo_rosaline_list",
+    "question": "Whose name on the party guest list makes Romeo want to go to the Capulet feast?",
+    "source_file": "romeo_and_juliet.xml",
+    "act": "ACT I",
+    "scene": "SCENE II.  A street.",
+    "anchor": "My fair niece Rosaline"
+  }
+]

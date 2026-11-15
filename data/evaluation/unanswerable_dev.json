@@ -1,0 +1,22 @@
+[
+  {
+    "id": "none_caesar",
+    "question": "What happens to Julius Caesar on the Ides of March?",
+    "answerable": false
+  },
+  {
+    "id": "none_prospero",
+    "question": "What is the name of Prospero's daughter?",
+    "answerable": false
+  },
+  {
+    "id": "none_breakfast",
+    "question": "What does Macbeth eat for breakfast on the day of the battle?",
+    "answerable": false
+  },
+  {
+    "id": "none_python",
+    "question": "How do I sort a list in Python?",
+    "answerable": false
+  }
+]

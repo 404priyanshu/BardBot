@@ -1,0 +1,17 @@
+[
+  {
+    "id": "none_pride",
+    "question": "Who wrote Pride and Prejudice?",
+    "answerable": false
+  },
+  {
+    "id": "none_othello",
+    "question": "What does Othello do with the handkerchief?",
+    "answerable": false
+  },
+  {
+    "id": "none_lear",
+    "question": "How does King Lear divide his kingdom between his daughters?",
+    "answerable": false
+  }
+]

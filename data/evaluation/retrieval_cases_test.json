@@ -1,0 +1,130 @@
+[
+  {
+    "id": "hamlet_frailty",
+    "question": "Why is Hamlet angry that his mother remarried so quickly?",
+    "source_file": "hamlet.xml",
+    "act": "ACT I",
+    "scene": "SCENE II.  A room of state in the castle.",
+    "anchor": "Frailty, thy name is woman"
+  },
+  {
+    "id": "hamlet_kills_polonius",
+    "question": "How does Hamlet kill Polonius?",
+    "source_file": "hamlet.xml",
+    "act": "ACT III",
+    "scene": "SCENE IV.  The Queen's closet.",
+    "anchor": "a rat? Dead, for a ducat, dead"
+  },
+  {
+    "id": "hamlet_queen_poisoned",
+    "question": "How does the queen die during the fencing match?",
+    "source_file": "hamlet.xml",
+    "act": "ACT V",
+    "scene": "SCENE II.  A hall in the castle.",
+    "anchor": "The drink, the drink"
+  },
+  {
+    "id": "hamlet_advice_actors",
+    "question": "What advice does Hamlet give the actors about how to perform?",
+    "source_file": "hamlet.xml",
+    "act": "ACT III",
+    "scene": "SCENE II.  A hall in the castle.",
+    "anchor": "Speak the speech, I pray you"
+  },
+  {
+    "id": "hamlet_farewell",
+    "question": "What does his friend say when the prince dies?",
+    "source_file": "hamlet.xml",
+    "act": "ACT V",
+    "scene": "SCENE II.  A hall in the castle.",
+    "anchor": "Good night sweet prince"
+  },
+  {
+    "id": "macbeth_murder_sleep",
+    "question": "What voice does Macbeth say he heard right after he killed Duncan?",
+    "source_file": "macbeth.xml",
+    "act": "ACT II",
+    "scene": "SCENE II.  The same.",
+    "anchor": "Macbeth does murder sleep"
+  },
+  {
+    "id": "macbeth_porter",
+    "question": "How does the drunk porter joke when someone knocks at the castle gate?",
+    "source_file": "macbeth.xml",
+    "act": "ACT II",
+    "scene": "SCENE III.  The same.",
+    "anchor": "Here's a knocking indeed"
+  },
+  {
+    "id": "macbeth_macduff_family",
+    "question": "How does Macduff react to the news that his family was killed?",
+    "source_file": "macbeth.xml",
+    "act": "ACT IV",
+    "scene": "SCENE III.  England. Before the King's palace.",
+    "anchor": "All my pretty ones"
+  },
+  {
+    "id": "macbeth_birnam_safe",
+    "question": "Why does Macbeth think he is safe in his castle?",
+    "source_file": "macbeth.xml",
+    "act": "ACT V",
+    "scene": "SCENE III.  Dunsinane. A room in the castle.",
+    "anchor": "Till Birnam wood remove to Dunsinane"
+  },
+  {
+    "id": "macbeth_boughs",
+    "question": "How do the soldiers hide their numbers as they march on the castle?",
+    "source_file": "macbeth.xml",
+    "act": "ACT V",
+    "scene": "SCENE IV.  Country near Birnam wood.",
+    "anchor": "Let every soldier hew him down a bough"
+  },
+  {
+    "id": "romeo_thumb",
+    "question": "How do the servants start a fight in the street?",
+    "source_file": "romeo_and_juliet.xml",
+    "act": "ACT I",
+    "scene": "SCENE I.  Verona. A public place.",
+    "anchor": "Do you bite your thumb at us, sir"
+  },
+  {
+    "id": "romeo_banishment",
+    "question": "How does Romeo react to the news that he is banished?",
+    "source_file": "romeo_and_juliet.xml",
+    "act": "ACT III",
+    "scene": "SCENE III.  Friar Laurence's cell.",
+    "anchor": "banishment! be merciful"
+  },
+  {
+    "id": "romeo_capulet_anger",
+    "question": "Why does Juliet's father become angry with her?",
+    "source_file": "romeo_and_juliet.xml",
+    "act": "ACT III",
+    "scene": "SCENE V.  Capulet's orchard.",
+    "anchor": "disobedient wretch"
+  },
+  {
+    "id": "romeo_letter_fails",
+    "question": "Why does the friar's letter never reach Romeo?",
+    "source_file": "romeo_and_juliet.xml",
+    "act": "ACT V",
+    "scene": "SCENE II.  Friar Laurence's cell.",
+    "anchor": "I could not send it"
+  },
+  {
+    "id": "romeo_wedding_morning",
+    "question": "Why does the nurse think the bride is dead on the morning of the wedding?",
+    "source_file": "romeo_and_juliet.xml",
+    "act": "ACT IV",
+    "scene": "SCENE V.  Juliet's chamber.",
+    "anchor": "She's dead, deceased"
+  },
+  {
+    "id": "romeo_apothecary",
+    "question": "Who sells Romeo the poison, and why?",
+    "source_file": "romeo_and_juliet.xml",
+    "act": "ACT V",
+    "scene": "SCENE I.  Mantua. A street.",
+    "anchor": "My poverty, but not my will, consents"
+  }
+]

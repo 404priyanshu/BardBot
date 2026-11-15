@@ -1,0 +1,42 @@
+[
+  {
+    "id": "hamlet_afterlife",
+    "question": "Why does Hamlet fear what happens after death?",
+    "source_file": "hamlet.xml",
+    "act": "ACT III",
+    "scene": "SCENE I.  A room in the castle.",
+    "anchor": "the dread of something after death"
+  },
+  {
+    "id": "hamlet_ghost_revelation",
+    "question": "Who does the ghost reveal murdered Hamlet's father?",
+    "source_file": "hamlet.xml",
+    "act": "ACT I",
+    "scene": "SCENE V.  Another part of the platform.",
+    "anchor": "The serpent that did sting thy father's life Now wears his crown."
+  },
+  {
+    "id": "macbeth_dagger",
+    "question": "What weapon does Macbeth imagine seeing before he kills the king?",
+    "source_file": "macbeth.xml",
+    "act": "ACT II",
+    "scene": "SCENE I.  Court of Macbeth's castle.",
+    "anchor": "Is this a dagger which I see before me"
+  },
+  {
+    "id": "lady_macbeth_hands",
+    "question": "Where does Lady Macbeth try to clean imaginary blood from her hands while sleepwalking?",
+    "source_file": "macbeth.xml",
+    "act": "ACT V",
+    "scene": "SCENE I.  Dunsinane. Ante-room in the castle.",
+    "anchor": "Out, damned spot! out, I say!"
+  },
+  {
+    "id": "juliet_names",
+    "question": "Why does Juliet believe Romeo's family name should not matter to their love?",
+    "source_file": "romeo_and_juliet.xml",
+    "act": "ACT II",
+    "scene": "SCENE II.  Capulet's orchard.",
+    "anchor": "that which we call a rose By any other name would smell as sweet"
+  }
+]

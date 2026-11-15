@@ -1,0 +1,146 @@
+[
+  {
+    "id": "hamlet_polonius_advice",
+    "question": "What advice does Polonius give his son before he leaves for France?",
+    "source_file": "hamlet.xml",
+    "act": "ACT I",
+    "scene": "SCENE III.  A room in Polonius' house.",
+    "anchor": "to thine ownself be true"
+  },
+  {
+    "id": "hamlet_test_king",
+    "question": "How does Hamlet plan to find out whether the king is really guilty?",
+    "source_file": "hamlet.xml",
+    "act": "ACT II",
+    "scene": "SCENE II.  A room in the castle.",
+    "anchor": "the play 's the thing"
+  },
+  {
+    "id": "hamlet_yorick",
+    "question": "What does Hamlet say when the gravedigger shows him an old skull?",
+    "source_file": "hamlet.xml",
+    "act": "ACT V",
+    "scene": "SCENE I.  A churchyard.",
+    "anchor": "Alas, poor Yorick"
+  },
+  {
+    "id": "hamlet_ophelia_death",
+    "question": "How does Ophelia die?",
+    "source_file": "hamlet.xml",
+    "act": "ACT IV",
+    "scene": "SCENE VII.  Another room in the castle.",
+    "anchor": "There is a willow grows aslant a brook"
+  },
+  {
+    "id": "hamlet_spares_praying_king",
+    "question": "Why does Hamlet not kill Claudius while he is praying?",
+    "source_file": "hamlet.xml",
+    "act": "ACT III",
+    "scene": "SCENE III.  A room in the castle.",
+    "anchor": "Now might I do it pat, now he is praying"
+  },
+  {
+    "id": "hamlet_rotten_state",
+    "question": "What does a guard say is wrong with the country after the ghost appears?",
+    "source_file": "hamlet.xml",
+    "act": "ACT I",
+    "scene": "SCENE IV.  The platform.",
+    "anchor": "Something is rotten in the state of Denmark"
+  },
+  {
+    "id": "macbeth_banquo_prophecy",
+    "question": "What do the witches predict for Banquo's descendants?",
+    "source_file": "macbeth.xml",
+    "act": "ACT I",
+    "scene": "SCENE III.  A heath near Forres.",
+    "anchor": "Thou shalt get kings, though thou be none"
+  },
+  {
+    "id": "macbeth_letter",
+    "question": "How does Lady Macbeth react when she reads her husband's letter about the witches?",
+    "source_file": "macbeth.xml",
+    "act": "ACT I",
+    "scene": "SCENE V.  Inverness. Macbeth's castle.",
+    "anchor": "Glamis thou art, and Cawdor; and shalt be What thou art promised"
+  },
+  {
+    "id": "macbeth_life_meaningless",
+    "question": "What does Macbeth say about life after he hears that his wife is dead?",
+    "source_file": "macbeth.xml",
+    "act": "ACT V",
+    "scene": "SCENE V.  Dunsinane. Within the castle.",
+    "anchor": "Life's but a walking shadow"
+  },
+  {
+    "id": "macbeth_banquet_ghost",
+    "question": "Whose ghost appears to Macbeth at the feast, and how does he react?",
+    "source_file": "macbeth.xml",
+    "act": "ACT III",
+    "scene": "SCENE IV.  The same. Hall in the palace.",
+    "anchor": "Never shake Thy gory locks at me"
+  },
+  {
+    "id": "macbeth_cauldron",
+    "question": "What ingredients go into the cauldron?",
+    "source_file": "macbeth.xml",
+    "act": "ACT IV",
+    "scene": "SCENE I.  A cavern. In the middle, a boiling cauldron.",
+    "anchor": "Eye of newt"
+  },
+  {
+    "id": "macbeth_macduff_birth",
+    "question": "Why does the prophecy that no man born of woman can harm Macbeth fail?",
+    "source_file": "macbeth.xml",
+    "act": "ACT V",
+    "scene": "SCENE VIII.  Another part of the field.",
+    "anchor": "from his mother's womb Untimely ripp'd"
+  },
+  {
+    "id": "romeo_mercutio_curse",
+    "question": "What curse does Mercutio say as he dies?",
+    "source_file": "romeo_and_juliet.xml",
+    "act": "ACT III",
+    "scene": "SCENE I.  A public place.",
+    "anchor": "A plague o' both your houses"
+  },
+  {
+    "id": "romeo_first_sight",
+    "question": "How does Romeo describe Juliet when he first sees her at the party?",
+    "source_file": "romeo_and_juliet.xml",
+    "act": "ACT I",
+    "scene": "SCENE V.  A hall in Capulet's house.",
+    "anchor": "O, she doth teach the torches to burn bright"
+  },
+  {
+    "id": "romeo_friar_plan",
+    "question": "What plan does the friar give Juliet so that she does not have to marry Paris?",
+    "source_file": "romeo_and_juliet.xml",
+    "act": "ACT IV",
+    "scene": "SCENE I.  Friar Laurence's cell.",
+    "anchor": "Take thou this vial"
+  },
+  {
+    "id": "romeo_death",
+    "question": "How does Romeo die?",
+    "source_file": "romeo_and_juliet.xml",
+    "act": "ACT V",
+    "scene": "SCENE III.  A churchyard; in it a tomb belonging to the Capulets.",
+    "anchor": "Thus with a kiss I die"
+  },
+  {
+    "id": "romeo_dream_fairy",
+    "question": "What does Mercutio say about the fairy who brings people dreams?",
+    "source_file": "romeo_and_juliet.xml",
+    "act": "ACT I",
+    "scene": "SCENE IV.  A street.",
+    "anchor": "Queen Mab hath been with you"
+  },
+  {
+    "id": "romeo_prologue_feud",
+    "question": "Where is the play set, and what is the conflict between the two families?",
+    "source_file": "romeo_and_juliet.xml",
+    "act": "ACT I",
+    "scene": null,
+    "anchor": "Two households, both alike in dignity"
+  }
+]
