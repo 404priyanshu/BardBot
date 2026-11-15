@@ -24,10 +24,14 @@ DEV_FILES = [
     "data/evaluation/retrieval_cases_holdout.json",
     "data/evaluation/retrieval_cases_test.json",
     "data/evaluation/unanswerable_dev.json",
-]
-TEST_FILES = [
+    # Used for the final test of the summary work, so now development data.
     "data/evaluation/retrieval_cases_test2.json",
     "data/evaluation/unanswerable_test.json",
+]
+# Unused. Run them only for the final measurement of the next design change.
+TEST_FILES = [
+    "data/evaluation/retrieval_cases_test3.json",
+    "data/evaluation/unanswerable_test2.json",
 ]
 
 

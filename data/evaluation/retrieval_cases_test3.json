@@ -1,0 +1,227 @@
+[
+  {
+    "id": "hamlet_mousetrap_reaction",
+    "question": "How does the king react while the actors perform the play at court?",
+    "source_file": "hamlet.xml",
+    "act": "ACT III",
+    "scene": "SCENE II.  A hall in the castle.",
+    "anchor": "Give me some light: away!",
+    "type": "plain"
+  },
+  {
+    "id": "hamlet_antic_disposition",
+    "question": "After Hamlet talks with the ghost, what does he warn his friends that he may do, and what does he make them swear?",
+    "source_file": "hamlet.xml",
+    "act": "ACT I",
+    "scene": "SCENE V.  Another part of the platform.",
+    "anchor": "antic disposition",
+    "type": "plain"
+  },
+  {
+    "id": "hamlet_laertes_poison",
+    "question": "What does Laertes plan to put on his sword for the fencing match?",
+    "source_file": "hamlet.xml",
+    "act": "ACT IV",
+    "scene": "SCENE VII.  Another room in the castle.",
+    "anchor": "I bought an unction of a mountebank",
+    "type": "plain"
+  },
+  {
+    "id": "hamlet_rosencrantz_fate",
+    "question": "How does Hamlet arrange the deaths of Rosencrantz and Guildenstern?",
+    "source_file": "hamlet.xml",
+    "act": "ACT V",
+    "scene": "SCENE II.  A hall in the castle.",
+    "anchor": "put to sudden death",
+    "type": "plain"
+  },
+  {
+    "id": "hamlet_recorder",
+    "question": "Why does Hamlet ask Guildenstern to play a pipe?",
+    "source_file": "hamlet.xml",
+    "act": "ACT III",
+    "scene": "SCENE II.  A hall in the castle.",
+    "anchor": "will you play upon this pipe?",
+    "type": "plain"
+  },
+  {
+    "id": "hamlet_ghost_whet",
+    "question": "Why does the ghost appear again while Hamlet talks to his mother?",
+    "source_file": "hamlet.xml",
+    "act": "ACT III",
+    "scene": "SCENE IV.  The Queen's closet.",
+    "anchor": "whet thy almost blunted purpose",
+    "type": "plain"
+  },
+  {
+    "id": "hamlet_claudius_cannot_pray",
+    "question": "Why can Claudius not truly pray for forgiveness?",
+    "source_file": "hamlet.xml",
+    "act": "ACT III",
+    "scene": "SCENE III.  A room in the castle.",
+    "anchor": "My words fly up, my thoughts remain below",
+    "type": "plain"
+  },
+  {
+    "id": "hamlet_quote_picture",
+    "question": "Who says \"Look here, upon this picture, and on this\", and what do the two pictures show?",
+    "source_file": "hamlet.xml",
+    "act": "ACT III",
+    "scene": "SCENE IV.  The Queen's closet.",
+    "anchor": "Look here, upon this picture, and on this",
+    "type": "quote"
+  },
+  {
+    "id": "hamlet_quote_occasions",
+    "question": "Who says \"How all occasions do inform against me\", and what makes the speaker say it?",
+    "source_file": "hamlet.xml",
+    "act": "ACT IV",
+    "scene": "SCENE IV.  A plain in Denmark.",
+    "anchor": "How all occasions do inform against me",
+    "type": "quote"
+  },
+  {
+    "id": "macbeth_captain_report",
+    "question": "How does the wounded captain describe Macbeth in the first battle?",
+    "source_file": "macbeth.xml",
+    "act": "ACT I",
+    "scene": "SCENE II.  A camp near Forres.",
+    "anchor": "unseam'd him from the nave to the chaps",
+    "type": "plain"
+  },
+  {
+    "id": "macbeth_duncan_arrives",
+    "question": "What does Duncan say about Macbeth's castle when he arrives there?",
+    "source_file": "macbeth.xml",
+    "act": "ACT I",
+    "scene": "SCENE VI.  Before Macbeth's castle.",
+    "anchor": "This castle hath a pleasant seat",
+    "type": "plain"
+  },
+  {
+    "id": "macbeth_blame_grooms",
+    "question": "How do Macbeth and his wife try to put the blame for the murder on other people?",
+    "source_file": "macbeth.xml",
+    "act": "ACT II",
+    "scene": "SCENE II.  The same.",
+    "anchor": "smear The sleepy grooms with blood",
+    "type": "plain"
+  },
+  {
+    "id": "macbeth_sons_flee",
+    "question": "Why do Duncan's sons decide to run away after their father is killed?",
+    "source_file": "macbeth.xml",
+    "act": "ACT II",
+    "scene": "SCENE III.  The same.",
+    "anchor": "daggers in men's smiles",
+    "type": "plain"
+  },
+  {
+    "id": "macbeth_first_apparition",
+    "question": "What warning does the first apparition give Macbeth?",
+    "source_file": "macbeth.xml",
+    "act": "ACT IV",
+    "scene": "SCENE I.  A cavern. In the middle, a boiling cauldron.",
+    "anchor": "beware Macduff",
+    "type": "plain"
+  },
+  {
+    "id": "macbeth_malcolm_test",
+    "question": "Why does Malcolm say bad things about himself when Macduff visits him in England?",
+    "source_file": "macbeth.xml",
+    "act": "ACT IV",
+    "scene": "SCENE III.  England. Before the King's palace.",
+    "anchor": "Devilish Macbeth",
+    "type": "plain"
+  },
+  {
+    "id": "macbeth_usurper_head",
+    "question": "What does Macduff show Malcolm at the end of the play?",
+    "source_file": "macbeth.xml",
+    "act": "ACT V",
+    "scene": "SCENE VIII.  Another part of the field.",
+    "anchor": "usurper's cursed head",
+    "type": "plain"
+  },
+  {
+    "id": "macbeth_quote_mind_diseased",
+    "question": "What does Macbeth want when he asks \"Canst thou not minister to a mind diseased\"?",
+    "source_file": "macbeth.xml",
+    "act": "ACT V",
+    "scene": "SCENE III.  Dunsinane. A room in the castle.",
+    "anchor": "minister to a mind diseased",
+    "type": "quote"
+  },
+  {
+    "id": "romeo_sad_start",
+    "question": "Why is Romeo unhappy at the start of the play?",
+    "source_file": "romeo_and_juliet.xml",
+    "act": "ACT I",
+    "scene": "SCENE I.  Verona. A public place.",
+    "anchor": "She hath forsworn to love",
+    "type": "plain"
+  },
+  {
+    "id": "romeo_tybalt_feast",
+    "question": "How does Tybalt find out that Romeo is at the feast, and why does Capulet stop him?",
+    "source_file": "romeo_and_juliet.xml",
+    "act": "ACT I",
+    "scene": "SCENE V.  A hall in Capulet's house.",
+    "anchor": "This, by his voice, should be a Montague",
+    "type": "plain"
+  },
+  {
+    "id": "romeo_swear_moon",
+    "question": "Why does Juliet tell Romeo not to swear by the moon?",
+    "source_file": "romeo_and_juliet.xml",
+    "act": "ACT II",
+    "scene": "SCENE II.  Capulet's orchard.",
+    "anchor": "swear not by the moon",
+    "type": "plain"
+  },
+  {
+    "id": "romeo_friar_plants",
+    "question": "What does the friar say about plants and herbs when he first appears?",
+    "source_file": "romeo_and_juliet.xml",
+    "act": "ACT II",
+    "scene": "SCENE III.  Friar Laurence's cell.",
+    "anchor": "Within the infant rind of this small flower",
+    "type": "plain"
+  },
+  {
+    "id": "romeo_lark_morning",
+    "question": "On the morning after their wedding night, why do Romeo and Juliet argue about which bird they hear?",
+    "source_file": "romeo_and_juliet.xml",
+    "act": "ACT III",
+    "scene": "SCENE V.  Capulet's orchard.",
+    "anchor": "It was the nightingale, and not the lark",
+    "type": "plain"
+  },
+  {
+    "id": "romeo_potion_fears",
+    "question": "What does Juliet fear before she drinks the friar's potion?",
+    "source_file": "romeo_and_juliet.xml",
+    "act": "ACT IV",
+    "scene": "SCENE III.  Juliet's chamber.",
+    "anchor": "What if it be a poison",
+    "type": "plain"
+  },
+  {
+    "id": "romeo_quote_mercutio_soul",
+    "question": "Why does Romeo say \"Mercutio's soul Is but a little way above our heads\"?",
+    "source_file": "romeo_and_juliet.xml",
+    "act": "ACT III",
+    "scene": "SCENE I.  A public place.",
+    "anchor": "Mercutio's soul",
+    "type": "quote"
+  },
+  {
+    "id": "romeo_quote_happy_dagger",
+    "question": "Why does Juliet say \"O happy dagger\"?",
+    "source_file": "romeo_and_juliet.xml",
+    "act": "ACT V",
+    "scene": "SCENE III.  A churchyard; in it a tomb belonging to the Capulets.",
+    "anchor": "O happy dagger",
+    "type": "quote"
+  }
+]
